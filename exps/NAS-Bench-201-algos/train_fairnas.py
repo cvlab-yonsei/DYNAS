@@ -158,7 +158,7 @@ elif args.method == 'dynas':
     for i in range(5):
         optimizers.append(torch.optim.SGD(
         params = search_model.parameters(),
-        lr = 0.025,
+        lr = args.lr,
         momentum = args.momentum,
         weight_decay = args.wd,
         nesterov = args.nesterov 
