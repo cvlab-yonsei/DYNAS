@@ -141,7 +141,7 @@ search_loader, _, valid_loader = get_nas_search_loaders(
 if args.method == 'baseline':
     optimizer = torch.optim.SGD(
         params = search_model.parameters(),
-        lr = 0.025,
+        lr = args.lr,
         momentum = args.momentum,
         weight_decay = args.wd,
         nesterov = args.nesterov 
