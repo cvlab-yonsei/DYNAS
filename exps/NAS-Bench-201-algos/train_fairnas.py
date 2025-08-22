@@ -172,10 +172,10 @@ elif args.method == 'dynas':
     r_min = 1/r_max
 
     w = -(r_max-r_min)/(np.log(C_max)-np.log(C_min))
-    tau = r_min - w*np.log(C_max)
+    args.tau = r_min - w*np.log(C_max)
 
     def get_LR_exp_coeff(num_param):
-        return w * np.log(num_param) + tau
+        return w * np.log(num_param) + args.tau
 
     def param_adaptive_LR(exp_coeff, cur_ep, total_ep = args.epochs * len(search_loader), eta_min = 0):
         y = ((-cur_ep+total_ep)) ** exp_coeff / (total_ep ** exp_coeff/ (1 - eta_min)) + eta_min
