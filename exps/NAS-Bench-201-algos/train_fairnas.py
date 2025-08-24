@@ -293,7 +293,8 @@ for ep in range(epochs):
         writer.add_scalar('train/subnet_top5', base_prec5, total_iter)
         total_iter += 1        
 
-    print(f'ep: {ep}, top1: {base_prec1.item()}')
+    print(f'ep: {ep}, top1: {base_prec1.item()}, top5: {base_prec5.item()}')
+    
 
 print('================Evaluation start================')
 loader_iter = iter(valid_loader)
