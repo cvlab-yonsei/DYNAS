@@ -229,15 +229,20 @@ for ep in range(epochs):
         
             arch_list = []
             for j in range(5):
-                arch_list.append(torch.zeros(6,5))
+                arch_list.append(torch.zeros(6, 5))
 
             for i in range(6):
-                idx = torch.randperm(5)
-                arch_list[0][i,idx[0]] = 1
-                arch_list[1][i,idx[1]] = 1
-                arch_list[2][i,idx[2]] = 1
-                arch_list[3][i,idx[3]] = 1
-                arch_list[4][i,idx[4]] = 1
+                if i != split_edge:
+                    idx = torch.randperm(5)
+                    arch_list[0][i, idx[0]] = 1
+                    arch_list[1][i, idx[1]] = 1
+                    arch_list[2][i, idx[2]] = 1
+                    arch_list[3][i, idx[3]] = 1
+                    arch_list[4][i, idx[4]] = 1
+
+                elif i == split_edge:
+                    for j in range(len(arch_list)):
+                        arch_list[j][i, selected_op] = 1
                 
             
             for arch in arch_list:
