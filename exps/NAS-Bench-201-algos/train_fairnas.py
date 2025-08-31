@@ -247,7 +247,7 @@ for ep in range(epochs):
                 _, pred = network(input)
                 loss = criterion(pred, label)
                 loss.backward()
-    #             nn.utils.clip_grad_norm_(network.parameters(), 5)
+                nn.utils.clip_grad_norm_(network.parameters(), 5)
             optimizer.step()
         
         elif args.method == 'dynas':
