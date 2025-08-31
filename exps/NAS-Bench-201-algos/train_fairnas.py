@@ -219,6 +219,8 @@ split_edge = random.randrange(6)
 logging.info(f'Split Edge: {split_edge}')
  
 for ep in range(epochs):
+    split_edge = random.randrange(6)     # << 이동
+    logging.info(f'Epoch {ep}, Split Edge: {split_edge}')
     network.train()
     for i, (input, label, _, _) in enumerate(search_loader):
         input = input.cuda()
