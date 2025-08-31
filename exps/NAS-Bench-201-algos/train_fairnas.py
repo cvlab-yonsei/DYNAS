@@ -330,8 +330,8 @@ for i in range(len(struc)):
 import pickle
 
 # For reporting 
-with open(f"./exps/NAS-Bench-201-algos/valid_accs/{args.file_name}.pkl","wb") as f:
-    pickle.dump(valid_accs, f)        
+# with open(f"./exps/NAS-Bench-201-algos/valid_accs/{args.file_name}.pkl","wb") as f:
+#     pickle.dump(valid_accs, f)        
 
 print(f'############# Kendall #############') 
 
