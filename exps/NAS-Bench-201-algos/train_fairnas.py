@@ -249,7 +249,6 @@ for ep in range(epochs):
         if args.method == 'baseline':
             optimizer.zero_grad()
         
-            arch_list = []
             arch_list = make_arch_list()
 
             for j in range(5):
@@ -276,7 +275,6 @@ for ep in range(epochs):
             selected_op = random.randrange(5)
             optimizers[selected_op].zero_grad()
 
-            arch_list = []
             arch_list = make_arch_list()
 
             for j in range(5):
