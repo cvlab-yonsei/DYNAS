@@ -34,6 +34,8 @@ import scipy.stats as stats
 import logging
 import datetime
 
+from xautodl.models.cell_searchs.genotypes import Structure
+
 import pickle
 
 with open("benchmark_data/cifar10_accs.pkl","rb") as f:
@@ -136,7 +138,6 @@ model_config = dict2config(
 
 
 search_model = get_cell_based_tiny_net(model_config)
-
 criterion = torch.nn.CrossEntropyLoss()
 
 
@@ -156,7 +157,7 @@ search_loader, _, valid_loader = get_nas_search_loaders(
         4,
     )
 
-logger.log(f'search_loader_num: {len(search_loader)}, valid_loader_num: {len(valid_loader)}')
+# logger.log(f'search_loader_num: {len(search_loader)}, valid_loader_num: {len(valid_loader)}')
 
 if args.method == 'baseline':
     optimizer = torch.optim.SGD(
@@ -201,7 +202,6 @@ elif args.method == 'dynas':
         y = ((-cur_ep+total_ep)) ** exp_coeff / (total_ep ** exp_coeff/ (1 - eta_min)) + eta_min
         return float(y)
 
-from xautodl.models.cell_searchs.genotypes import Structure
 
 genotypes = []
 op_names = deepcopy(search_space)
