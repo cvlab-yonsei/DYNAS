@@ -52,6 +52,26 @@ with open("benchmark_data/kendal_320_idx.pkl","rb") as f:
     eval_arch_list = pickle.load(f)   
 
 
+def make_arch_list(split_edge=None, selected_op=None):
+    """
+    split_edge, selected_op이 None이면 baseline 모드로 동작.
+    둘 다 주어지면 dynas 모드로 동작.
+    """
+    arch_list = [torch.zeros(6, 5) for _ in range(5)]
+
+    for i in range(6):
+        if split_edge is not None and i == split_edge:
+            # dynas: 특정 edge에서 모든 subnet이 같은 op를 선택
+            for j in range(5):
+                arch_list[j][i, selected_op] = 1
+        else:
+            # baseline 또는 dynas의 일반 edge
+            idx = torch.randperm(5)
+            for j in range(5):
+                arch_list[j][i, idx[j]] = 1
+
+    return arch_list
+
 def str2bool(v):
     if isinstance(v, bool):
        return v
