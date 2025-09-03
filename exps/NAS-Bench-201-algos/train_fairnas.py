@@ -103,6 +103,9 @@ parser.add_argument('--method', type=str, choices=['baseline', 'dynas'])
 parser.add_argument('--max_coeff', type=float, default=4.0, help='gamma_max')
 
 
+parser.add_argument('--theta', type=float, default=1.0, help='gamma_max')
+
+
 
 args = parser.parse_args()
 
