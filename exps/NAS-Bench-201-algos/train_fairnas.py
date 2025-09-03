@@ -101,10 +101,8 @@ parser.add_argument('--val_batch_size', type=int, default=256)
 
 parser.add_argument('--method', type=str, choices=['baseline', 'dynas'])
 parser.add_argument('--max_coeff', type=float, default=4.0, help='gamma_max')
-parser.add_argument('--tau', type=float, default=4.0, help='gamma_max')
 
-# test arg
-parser.add_argument('--test_tau', type=float, default=4.0, help='gamma_max')
+
 
 args = parser.parse_args()
 
@@ -126,6 +124,7 @@ print('=*' * 20)
 
 epochs = args.epochs
 writer = SummaryWriter(args.log_dir)
+
 
 search_space = get_search_spaces("cell", 'nas-bench-201')
 model_config = dict2config(
@@ -210,6 +209,7 @@ elif args.method == 'dynas':
 
 
 genotypes = []
+
 op_names = deepcopy(search_space)
 for i in range(1, 4):
     xlist = []
@@ -222,7 +222,7 @@ arch = Structure(genotypes)
 edge2index = network.edge2index
 max_nodes = 4
 def genotype(enc): # upon calling, the caller should pass the "theta" into this object as "alpha" first
-#     theta = torch.softmax(_arch_parameters, dim=-1) * enc
+    theta = torch.softmax(_arch_parameters, dim=-1) * enc
     theta = enc
     genotypes = []
     for i in range(1, max_nodes):
