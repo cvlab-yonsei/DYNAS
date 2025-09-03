@@ -74,6 +74,7 @@ def make_arch_list(split_edge=None, selected_op=None):
 
     return arch_list
 
+
 def str2bool(v):
     if isinstance(v, bool):
        return v
@@ -100,6 +101,8 @@ parser.add_argument('--val_batch_size', type=int, default=256)
 
 parser.add_argument('--method', type=str, choices=['baseline', 'dynas'])
 parser.add_argument('--max_coeff', type=float, default=4.0, help='gamma_max')
+parser.add_argument('--tau', type=float, default=4.0, help='gamma_max')
+
 args = parser.parse_args()
 
 
