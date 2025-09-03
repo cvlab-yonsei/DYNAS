@@ -225,8 +225,9 @@ arch = Structure(genotypes)
 edge2index = network.edge2index
 max_nodes = 4
 def genotype(enc): # upon calling, the caller should pass the "theta" into this object as "alpha" first
-    theta = torch.softmax(_arch_parameters, dim=-1) * enc
-    theta = enc
+    # theta = torch.softmax(_arch_parameters, dim=-1) * enc
+    # theta = enc
+    theta = args.theta
     genotypes = []
     for i in range(1, max_nodes):
       xlist = []
