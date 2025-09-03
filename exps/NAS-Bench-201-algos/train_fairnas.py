@@ -103,6 +103,9 @@ parser.add_argument('--method', type=str, choices=['baseline', 'dynas'])
 parser.add_argument('--max_coeff', type=float, default=4.0, help='gamma_max')
 parser.add_argument('--tau', type=float, default=4.0, help='gamma_max')
 
+# test arg
+parser.add_argument('--test_tau', type=float, default=4.0, help='gamma_max')
+
 args = parser.parse_args()
 
 
