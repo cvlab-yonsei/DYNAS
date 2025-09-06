@@ -330,6 +330,7 @@ for ep in range(epochs):
         total_iter += 1        
 
     print(f'ep: {ep}, top1: {base_prec1.item()}, top5: {base_prec5.item()}')
+    logging.info(f'ep: {ep}, top1: {base_prec1.item()}, top5: {base_prec5.item()}')
     
 
 print('================Evaluation start================')
