@@ -102,11 +102,6 @@ parser.add_argument('--val_batch_size', type=int, default=256)
 parser.add_argument('--method', type=str, choices=['baseline', 'dynas'])
 parser.add_argument('--max_coeff', type=float, default=4.0, help='gamma_max')
 
-
-parser.add_argument('--theta', type=float, default=1.0, help='gamma_max')
-
-
-
 args = parser.parse_args()
 
 
@@ -226,8 +221,8 @@ edge2index = network.edge2index
 max_nodes = 4
 def genotype(enc): # upon calling, the caller should pass the "theta" into this object as "alpha" first
     # theta = torch.softmax(_arch_parameters, dim=-1) * enc
-    # theta = enc
-    theta = args.theta
+    theta = enc
+    # theta = args.theta
     genotypes = []
     for i in range(1, max_nodes):
       xlist = []
