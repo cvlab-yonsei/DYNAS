@@ -139,13 +139,18 @@ model_config = dict2config(
     None,
 )
 
-
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 search_model = get_cell_based_tiny_net(model_config)
 criterion = torch.nn.CrossEntropyLoss()
 
+network = search_model.to(device)
+criterion = criterion.to(device)
 
-network = search_model.cuda()
-criterion = criterion.cuda()
+# search_model = get_cell_based_tiny_net(model_config)
+# criterion = torch.nn.CrossEntropyLoss()
+
+# network = search_model.cuda()
+# criterion = criterion.cuda()
 
 train_data, valid_data, _, _ = get_datasets( # train_data: trainset, valid_data: testset
         'cifar10', './dataset', -1
