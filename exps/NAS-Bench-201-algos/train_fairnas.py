@@ -316,7 +316,7 @@ for ep in range(epochs):
                 
                 loss = criterion(pred, label) * loss_coeff
                 loss.backward()
-    #             nn.utils.clip_grad_norm_(network.parameters(), 5)
+                nn.utils.clip_grad_norm_(network.parameters(), 5)
             optimizers[selected_op].step()
 
         writer.add_scalar('train/subnet_loss', loss.item(), total_iter)
