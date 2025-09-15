@@ -256,13 +256,10 @@ for ep in range(epochs):
     for i, (input, label, _, _) in enumerate(search_loader):
         input = input.cuda()
         label = label.cuda()
-        # input = input.to(device)
-        # label = label.to(device)
 
         if args.method == 'baseline':
             optimizer.zero_grad()
         
-            # arch_list = make_arch_list()
             arch_list = []
 
             for j in range(5):
