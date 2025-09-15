@@ -224,34 +224,21 @@ arch = Structure(genotypes)
 
 edge2index = network.edge2index
 max_nodes = 4
-# def genotype(enc): # upon calling, the caller should pass the "theta" into this object as "alpha" first
-#     theta = torch.softmax(_arch_parameters, dim=-1) * enc
-#     # theta = enc
-#     # theta = args.theta
-#     genotypes = []
-#     for i in range(1, max_nodes):
-#       xlist = []
-#       for j in range(i):
-#         node_str = '{:}<-{:}'.format(i, j)
-#         with torch.no_grad():
-#           weights = theta[ edge2index[node_str] ]
-#           op_name = op_names[ weights.argmax().item() ]
-#         xlist.append((op_name, j))
-#       genotypes.append( tuple(xlist) )
-#     return Structure( genotypes )
-def genotype(enc):
-    theta = args.theta
-    with torch.no_grad():
-        genotypes = []
-        for i in range(1, max_nodes):
-            xlist = []
-            for j in range(i):
-                idx = edge2index[f'{i}<-{j}']
-                weights = enc[idx]
-                op_name = op_names[weights.argmax().item()]
-                xlist.append((op_name, j))
-            genotypes.append(tuple(xlist))
-    return Structure(genotypes)
+def genotype(enc): # upon calling, the caller should pass the "theta" into this object as "alpha" first
+    theta = torch.softmax(_arch_parameters, dim=-1) * enc
+    # theta = enc
+    # theta = args.theta
+    genotypes = []
+    for i in range(1, max_nodes):
+      xlist = []
+      for j in range(i):
+        node_str = '{:}<-{:}'.format(i, j)
+        with torch.no_grad():
+          weights = theta[ edge2index[node_str] ]
+          op_name = op_names[ weights.argmax().item() ]
+        xlist.append((op_name, j))
+      genotypes.append( tuple(xlist) )
+    return Structure( genotypes )
 
 
 struc = get_struc()
@@ -346,8 +333,11 @@ for ep in range(epochs):
     print(f'ep: {ep}, top1: {base_prec1.item()}, top5: {base_prec5.item()}')
     
     
-
+    
+    
+print('================================================')
 print('================Evaluation start================')
+print('================================================')
 loader_iter = iter(valid_loader)
 valid_accs = []
 
