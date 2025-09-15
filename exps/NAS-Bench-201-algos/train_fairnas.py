@@ -262,7 +262,8 @@ for ep in range(epochs):
         if args.method == 'baseline':
             optimizer.zero_grad()
         
-            arch_list = make_arch_list()
+            # arch_list = make_arch_list()
+            arch_list = []
 
             for j in range(5):
                 arch_list.append(torch.zeros(6,5))
@@ -289,6 +290,7 @@ for ep in range(epochs):
             optimizers[selected_op].zero_grad()
 
             arch_list = make_arch_list()
+            arch_list = []
 
             for j in range(5):
                 arch_list.append(torch.zeros(6, 5))
