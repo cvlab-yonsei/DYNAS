@@ -254,10 +254,10 @@ for ep in range(epochs):
     logging.info(f'Epoch {ep}, Split Edge: {split_edge}')
     network.train()
     for i, (input, label, _, _) in enumerate(search_loader):
-        # input = input.cuda()
-        # label = label.cuda()
-        input = input.to(device)
-        label = label.to(device)
+        input = input.cuda()
+        label = label.cuda()
+        # input = input.to(device)
+        # label = label.to(device)
 
         if args.method == 'baseline':
             optimizer.zero_grad()
