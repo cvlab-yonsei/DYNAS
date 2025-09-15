@@ -139,13 +139,6 @@ model_config = dict2config(
     None,
 )
 
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# search_model = get_cell_based_tiny_net(model_config)
-# criterion = torch.nn.CrossEntropyLoss()
-
-# network = search_model.to(device)
-# criterion = criterion.to(device)
-
 search_model = get_cell_based_tiny_net(model_config)
 criterion = torch.nn.CrossEntropyLoss()
 
@@ -361,7 +354,6 @@ for i in range(len(struc)):
 
         valid_accs.append(valid_acc)
 
-#     print(f'=============={i}==============')
     print(f'struc_num: {i}, valid_acc: {valid_acc * 100}%, real_acc: {cifar10_accs[i]}%, num_params: {num_params[i]}M')
     logging.info(f'struc_num: {i}, valid_acc: {valid_acc * 100}%, real_acc: {cifar10_accs[i]}%, num_params: {num_params[i]}M')
 
