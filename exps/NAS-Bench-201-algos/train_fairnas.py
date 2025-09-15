@@ -240,6 +240,7 @@ max_nodes = 4
 #       genotypes.append( tuple(xlist) )
 #     return Structure( genotypes )
 def genotype(enc):
+    theta = args.theta
     with torch.no_grad():
         genotypes = []
         for i in range(1, max_nodes):
