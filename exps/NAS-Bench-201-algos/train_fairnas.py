@@ -34,8 +34,6 @@ import scipy.stats as stats
 import logging
 import datetime
 
-from xautodl.models.cell_searchs.genotypes import Structure
-
 import pickle
 
 with open("benchmark_data/cifar10_accs.pkl","rb") as f:
@@ -52,27 +50,6 @@ with open("benchmark_data/num_params.pkl","rb") as f:
     
 with open("benchmark_data/kendal_320_idx.pkl","rb") as f:
     eval_arch_list = pickle.load(f)   
-
-
-def make_arch_list(split_edge=None, selected_op=None):
-    """
-    split_edge, selected_op이 None이면 baseline 모드로 동작.
-    둘 다 주어지면 dynas 모드로 동작.
-    """
-    arch_list = [torch.zeros(6, 5) for _ in range(5)]
-
-    for i in range(6):
-        if split_edge is not None and i == split_edge:
-            # dynas: 특정 edge에서 모든 subnet이 같은 op를 선택
-            for j in range(5):
-                arch_list[j][i, selected_op] = 1
-        else:
-            # baseline 또는 dynas의 일반 edge
-            idx = torch.randperm(5)
-            for j in range(5):
-                arch_list[j][i, idx[j]] = 1
-
-    return arch_list
 
 
 def str2bool(v):
@@ -101,7 +78,6 @@ parser.add_argument('--val_batch_size', type=int, default=256)
 
 parser.add_argument('--method', type=str, choices=['baseline', 'dynas'])
 parser.add_argument('--max_coeff', type=float, default=4.0, help='gamma_max')
-
 args = parser.parse_args()
 
 
@@ -123,7 +99,6 @@ print('=*' * 20)
 epochs = args.epochs
 writer = SummaryWriter(args.log_dir)
 
-
 search_space = get_search_spaces("cell", 'nas-bench-201')
 model_config = dict2config(
     {
@@ -139,8 +114,11 @@ model_config = dict2config(
     None,
 )
 
+
 search_model = get_cell_based_tiny_net(model_config)
+
 criterion = torch.nn.CrossEntropyLoss()
+
 
 network = search_model.cuda()
 criterion = criterion.cuda()
@@ -163,7 +141,7 @@ search_loader, _, valid_loader = get_nas_search_loaders(
 if args.method == 'baseline':
     optimizer = torch.optim.SGD(
         params = search_model.parameters(),
-        lr = args.lr,
+        lr = 0.025,
         momentum = args.momentum,
         weight_decay = args.wd,
         nesterov = args.nesterov 
@@ -180,7 +158,7 @@ elif args.method == 'dynas':
     for i in range(5):
         optimizers.append(torch.optim.SGD(
         params = search_model.parameters(),
-        lr = args.lr,
+        lr = 0.025,
         momentum = args.momentum,
         weight_decay = args.wd,
         nesterov = args.nesterov 
@@ -194,18 +172,18 @@ elif args.method == 'dynas':
     r_min = 1/r_max
 
     w = -(r_max-r_min)/(np.log(C_max)-np.log(C_min))
-    args.tau = r_min - w*np.log(C_max)
+    tau = r_min - w*np.log(C_max)
 
     def get_LR_exp_coeff(num_param):
-        return w * np.log(num_param) + args.tau
+        return w * np.log(num_param) + tau
 
     def param_adaptive_LR(exp_coeff, cur_ep, total_ep = args.epochs * len(search_loader), eta_min = 0):
         y = ((-cur_ep+total_ep)) ** exp_coeff / (total_ep ** exp_coeff/ (1 - eta_min)) + eta_min
         return float(y)
 
+from xautodl.models.cell_searchs.genotypes import Structure
 
 genotypes = []
-
 op_names = deepcopy(search_space)
 for i in range(1, 4):
     xlist = []
@@ -218,9 +196,8 @@ arch = Structure(genotypes)
 edge2index = network.edge2index
 max_nodes = 4
 def genotype(enc): # upon calling, the caller should pass the "theta" into this object as "alpha" first
-    theta = torch.softmax(_arch_parameters, dim=-1) * enc
-    # theta = enc
-    # theta = args.theta
+#     theta = torch.softmax(_arch_parameters, dim=-1) * enc
+    theta = enc
     genotypes = []
     for i in range(1, max_nodes):
       xlist = []
@@ -233,7 +210,6 @@ def genotype(enc): # upon calling, the caller should pass the "theta" into this 
       genotypes.append( tuple(xlist) )
     return Structure( genotypes )
 
-
 struc = get_struc()
 
 
@@ -243,8 +219,6 @@ split_edge = random.randrange(6)
 logging.info(f'Split Edge: {split_edge}')
  
 for ep in range(epochs):
-    split_edge = random.randrange(6)     # << 이동
-    logging.info(f'Epoch {ep}, Split Edge: {split_edge}')
     network.train()
     for i, (input, label, _, _) in enumerate(search_loader):
         input = input.cuda()
@@ -254,7 +228,6 @@ for ep in range(epochs):
             optimizer.zero_grad()
         
             arch_list = []
-
             for j in range(5):
                 arch_list.append(torch.zeros(6,5))
 
@@ -272,27 +245,28 @@ for ep in range(epochs):
                 _, pred = network(input)
                 loss = criterion(pred, label)
                 loss.backward()
-                nn.utils.clip_grad_norm_(network.parameters(), 5)
+    #             nn.utils.clip_grad_norm_(network.parameters(), 5)
             optimizer.step()
         
         elif args.method == 'dynas':
             selected_op = random.randrange(5)
             optimizers[selected_op].zero_grad()
-
-            arch_list = make_arch_list()
             arch_list = []
-
             for j in range(5):
-                arch_list.append(torch.zeros(6, 5))
+                arch_list.append(torch.zeros(6,5))
+
+            arch_list = []
+            for j in range(5):
+                arch_list.append(torch.zeros(6,5))
 
             for i in range(6):
                 if i != split_edge:
                     idx = torch.randperm(5)
-                    arch_list[0][i, idx[0]] = 1
-                    arch_list[1][i, idx[1]] = 1
-                    arch_list[2][i, idx[2]] = 1
-                    arch_list[3][i, idx[3]] = 1
-                    arch_list[4][i, idx[4]] = 1
+                    arch_list[0][i,idx[0]] = 1
+                    arch_list[1][i,idx[1]] = 1
+                    arch_list[2][i,idx[2]] = 1
+                    arch_list[3][i,idx[3]] = 1
+                    arch_list[4][i,idx[4]] = 1
 
                 elif i == split_edge:
                     for j in range(len(arch_list)):
@@ -309,7 +283,7 @@ for ep in range(epochs):
                 
                 loss = criterion(pred, label) * loss_coeff
                 loss.backward()
-                nn.utils.clip_grad_norm_(network.parameters(), 5)
+    #             nn.utils.clip_grad_norm_(network.parameters(), 5)
             optimizers[selected_op].step()
 
         writer.add_scalar('train/subnet_loss', loss.item(), total_iter)
@@ -322,14 +296,9 @@ for ep in range(epochs):
         writer.add_scalar('train/subnet_top5', base_prec5, total_iter)
         total_iter += 1        
 
-    print(f'ep: {ep}, top1: {base_prec1.item()}, top5: {base_prec5.item()}')
-    
-    
-    
-    
-print('================================================')
+    print(f'ep: {ep}, top1: {base_prec1.item()}')
+
 print('================Evaluation start================')
-print('================================================')
 loader_iter = iter(valid_loader)
 valid_accs = []
 
@@ -354,6 +323,7 @@ for i in range(len(struc)):
 
         valid_accs.append(valid_acc)
 
+#     print(f'=============={i}==============')
     print(f'struc_num: {i}, valid_acc: {valid_acc * 100}%, real_acc: {cifar10_accs[i]}%, num_params: {num_params[i]}M')
     logging.info(f'struc_num: {i}, valid_acc: {valid_acc * 100}%, real_acc: {cifar10_accs[i]}%, num_params: {num_params[i]}M')
 
