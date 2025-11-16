@@ -33,6 +33,7 @@ python train_spos.py \
     --method dynas
 ```
 
+- The work is conducted using the NAS-Bench-201 dataset.
 - You can run for other baselines (FairNAS and FSNAS) in a similar way.
 - Our code is mainly built on [AutoDL](https://github.com/D-X-Y/AutoDL-Projects/tree/main).
 
