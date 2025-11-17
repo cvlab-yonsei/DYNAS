@@ -132,8 +132,6 @@ search_loader, _, valid_loader = get_nas_search_loaders(
         4,
     )
 
-# logger.log(f'search_loader_num: {len(search_loader)}, valid_loader_num: {len(valid_loader)}')
-
 if args.method == 'baseline':
     def get_new_model_optimizer_scheduler():
         network = get_cell_based_tiny_net(model_config)

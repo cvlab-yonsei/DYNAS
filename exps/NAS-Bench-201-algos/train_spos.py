@@ -136,8 +136,6 @@ search_loader, _, valid_loader = get_nas_search_loaders(
         4,
     )
 
-# logger.log(f'search_loader_num: {len(search_loader)}, valid_loader_num: {len(valid_loader)}')
-
 if args.method == 'baseline':
     optimizer = torch.optim.SGD(
         params = search_model.parameters(),
